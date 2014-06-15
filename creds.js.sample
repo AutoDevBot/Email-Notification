@@ -1,0 +1,11 @@
+exports.ADBEN_AUTH_TOKEN='abc123';
+exports.ADBEN_EMAIL_TRANSPORT='SMTP';
+exports.ADBEN_SMTP_PROVIDER='Gmail';
+
+// Gmail
+exports.ADBEN_SMTP_LOGIN='email@gmail.com';
+exports.ADBEN_SMTP_PASSWORD='password';
+
+// Amazon
+exports.AWSAccessKeyID='awsaccesskey';
+exports.AWSSecretKey='awskey';
