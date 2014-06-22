@@ -1,5 +1,5 @@
 var emailroute = require('../routes/email');
-//var emailsvc = require('../lib/emailsvc');
+var emailsvc = require('../lib/emailsvc');
 
 var Response = function() {
 	this.json = function(httpcode) {
@@ -7,9 +7,11 @@ var Response = function() {
 	}
 }
 
-describe("Send an email", function(){
+describe("Sending email", function(){
 
 	var req, res;
+	var toemail = 'toemail@autodevbot.com';
+	var fromemail = 'noreply@autodevbot.com';
 
 	beforeEach(function() {
 		req = {};
@@ -21,17 +23,40 @@ describe("Send an email", function(){
 		done();
 	});
 
-	it("should return an error when no auth token passed in", function() {
+	it("should return a 403 error when no auth token passed in", function() {
 		emailroute.sendmail(req, res);
 		expect(res.httpcode).toEqual(403);
 	});
 
-	it("should return 200 for a sync request", function(done) {
-		req.body.async = false;
+	it("should return a 400 error when To and From emails are not specified", function() {
 		req.body.authtoken = 'abc123';
 		emailroute.sendmail(req, res);
+		expect(res.httpcode).toEqual(400);
+	});	
+
+	it("should return 200 for an async request", function(done) {
+		req.body.async = true;
+		req.body.authtoken = 'abc123';
+		req.body.from = fromemail;
+		req.body.to = toemail;
+		var spy = spyOn(emailsvc, "send");
+		emailroute.sendmail(req, res);
+		expect(spy).toHaveBeenCalled();		
 		expect(res.httpcode).toEqual(200);
 		done();
 	});
+
+	it ("should send an email when all required attributes are present", function(done) {
+		req.body.async = false;
+		req.body.authtoken = 'abc123';
+		req.body.from = fromemail;
+		req.body.to = toemail;
+		req.body.subject = 'Test email';
+		req.body.text = 'This is a test email.';
+		var spy = spyOn(emailsvc, "send");
+		emailroute.sendmail(req, res);
+		expect(spy).toHaveBeenCalled();
+		done();
+	})
 
 });
