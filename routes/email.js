@@ -16,9 +16,9 @@ exports.sendmail = function(req, res){
 
 		emailsvc.send(req, function(err, response) {
 			if (err) {
-				res.json(500);
+				res.json(500, err);
 			} else {
-				res.json(200);
+				res.json(response.statusCode || 200, response.message || null);
 			}
 		});
 	}

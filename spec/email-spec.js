@@ -46,17 +46,63 @@ describe("Sending email", function(){
 		done();
 	});
 
-	it ("should send an email when all required attributes are present", function(done) {
-		req.body.async = false;
-		req.body.authtoken = 'abc123';
-		req.body.from = fromemail;
-		req.body.to = toemail;
-		req.body.subject = 'Test email';
-		req.body.text = 'This is a test email.';
-		var spy = spyOn(emailsvc, "send");
-		emailroute.sendmail(req, res);
-		expect(spy).toHaveBeenCalled();
-		done();
-	})
+	describe("SMTP email", function() {
+		beforeEach(function() {
+			process.env.ADBEN_EMAIL_TRANSPORT = 'SMTP';
+		});
+
+		afterEach(function() {
+			process.env.ADBEN_EMAIL_TRANSPORT = undefined;
+		});
+
+		it ("should send an email when all required attributes are present", function(done) {
+			req.body.async = false;
+			req.body.authtoken = 'abc123';
+			req.body.from = fromemail;
+			req.body.to = toemail;
+			req.body.subject = 'Test email';
+			req.body.text = 'This is a test email.';
+			var spy = spyOn(emailsvc, "send");
+			emailroute.sendmail(req, res);
+			expect(spy).toHaveBeenCalled();
+			done();
+		});
+	});
+
+
+	describe("Amazon SES", function() {
+
+		beforeEach(function() {
+			process.env.ADBEN_EMAIL_TRANSPORT = 'SES';
+		});
+
+		afterEach(function() {
+			process.env.ADBEN_EMAIL_TRANSPORT = undefined;
+		});
+
+		it ("should send an email when all required attributes are present", function(done) {
+			req.body.async = false;
+			req.body.authtoken = 'abc123';
+			req.body.from = fromemail;
+			req.body.to = toemail;
+			req.body.subject = 'Test email';
+			req.body.text = 'This is a test email.';
+			var spy = spyOn(emailsvc, "send");
+			emailroute.sendmail(req, res);
+			expect(spy).toHaveBeenCalled();
+			done();
+		});
+	});
 
 });
+
+
+
+
+
+
+
+
+
+
+
